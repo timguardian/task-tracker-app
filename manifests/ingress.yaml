@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: "*.sa.homework"
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: api-service
+            servicePort: 8000
+  - host: "sa.homework"
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: frontend-service
+            servicePort: 3000
