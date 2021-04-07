@@ -6,6 +6,7 @@ import AddTask from './components/AddTask';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
+import CONSTANTS from './constants';
 
 const useStyles = makeStyles({
   root: {
@@ -13,29 +14,25 @@ const useStyles = makeStyles({
   }
 });
 
-const protocol = "http";
-const host = "api.sa.homework";
-const port = 80;
-
 const App = () => {
   const [showAddTask, setShowAddTask] = useState(false)
   const [tasks, setTasks] = useState([]);
   const classes = useStyles();
 
-  const apiUrl = protocol + "://" + host + ":" + port;
+  const apiUrl = CONSTANTS.API_PROTOCOL + "://" + CONSTANTS.API_HOST + ":" + CONSTANTS.API_PORT;
 
   useEffect(() => {
     console.log(isServiceAlive());
-    /*const getTasks = async () => {
-      const tasksFromServer = await fetchTasks()
-      setTasks(tasksFromServer)
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks();
+      setTasks(tasksFromServer);
     }
 
-    getTasks()*/
-  });
+    getTasks()
+  }, []);
 
   const fetchTasks = async () => {
-    const res = await fetch(apiUrl + '/tasks')
+    const res = await fetch(apiUrl + '/task/list')
     const data = await res.json()
 
     return data
@@ -48,14 +45,14 @@ const App = () => {
   };
 
   const fetchTask = async (id) => {
-    const res = await fetch(`${apiUrl}/tasks/${id}`)
-    const data = await res.json()
+    const res = await fetch(`${apiUrl}/task/${id}`)
+    const data = await res.json();
 
     return data
   }
 
   const addTask = async (task) => {
-    const res = await fetch(apiUrl + '/tasks', {
+    const res = await fetch(apiUrl + '/task/add', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -69,7 +66,7 @@ const App = () => {
   }
 
   const deleteTask = async (id) => {
-    const res = await fetch(`${apiUrl}/tasks/${id}`, {
+    const res = await fetch(`${apiUrl}/task/delete/${id}`, {
       method: 'DELETE',
     })
     res.status === 200
@@ -81,7 +78,9 @@ const App = () => {
     const taskToToggle = await fetchTask(id)
     const updTask = { ...taskToToggle, reminder: !taskToToggle.reminder }
 
-    const res = await fetch(`${apiUrl}/tasks/${id}`, {
+ 
+
+    const res = await fetch(`${apiUrl}/task/update/${id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
